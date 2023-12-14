@@ -99,7 +99,8 @@
     if(dateTime.toString() != "Invalid Date"){
         this.events.push({
         date: dateTime.toLocaleString(),
-        description: this.newEvent.description
+        description: this.newEvent.description,
+        lieu: this.newEvent.lieu
         });
         fetch(window.location.href+'add', {
             method: 'POST',
