@@ -48,12 +48,16 @@
           <label for="eventDescription">Description:</label>
           <input type="text" id="eventDescription" class="form-control" v-model="newEvent.description">
         </div>
+        <div class="form-group">
+          <label for="eventDescription">Lieu:</label>
+          <input type="text" id="eventDescription" class="form-control" v-model="newEvent.lieu">
+        </div>
         <button @click="addEvent" class="btn btn-primary">Add Event</button>
       </div>
       <div class="col-md-8">
         <div id="calendar">
           <div v-for="event in events" :key="event.id" @click="askConfirmation(event)" class="event">
-            {{ event.description }} - {{ event.date }}
+            {{ event.description }} - {{ event.lieu }} - {{ event.date }}
           </div>
         </div>
       </div>
@@ -68,6 +72,7 @@
               newEvent: {
               date: '',
               time: '',
+              lieu: '',
               description: ''
               },
               events: [],
@@ -109,6 +114,7 @@
         })
         this.newEvent.date = '';
         this.newEvent.time = '';
+        this.newEvent.lieu = '';
         this.newEvent.description = '';
     }else{
         alert("Invalid Date")
