@@ -49,8 +49,8 @@
           <input type="text" id="eventDescription" class="form-control" v-model="newEvent.description">
         </div>
         <div class="form-group">
-          <label for="eventDescription">Lieu:</label>
-          <input type="text" id="eventDescription" class="form-control" v-model="newEvent.lieu">
+          <label for="eventLieu">Lieu:</label>
+          <input type="text" id="eventLieu" class="form-control" v-model="newEvent.lieu">
         </div>
         <button @click="addEvent" class="btn btn-primary">Add Event</button>
       </div>
@@ -109,7 +109,8 @@
             },
             body: JSON.stringify({
             date: dateTime.toLocaleString(),
-            description: this.newEvent.description
+            description: this.newEvent.description,
+            lieu: this.newEvent.lieu
             }), // Your payload here
         })
         this.newEvent.date = '';

@@ -63,9 +63,7 @@ function API()
                             -- Stocker les données dans la liste locale
                             table.insert(events, body)
                         else
-                            console(body)
                             for i, v in ipairs(events) do
-                                console(v)
                                 if v == body then
                                     table.remove(events, i)
                                     break  -- Arrêtez la recherche dès que l'élément est trouvé et supprimé
