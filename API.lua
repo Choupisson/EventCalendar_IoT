@@ -38,7 +38,7 @@ function API()
                         client:send(response)
                     end
                 else 
-                    if method == "POST" and (path == "/add" or path=="/remove" or parth == "/setTime") then
+                    if method == "POST" and (path == "/add" or path=="/remove" or path == "/setTime") then
                         -- Lire les données du corps de la requête
                         local contentLength = 0
                         local body = ""
