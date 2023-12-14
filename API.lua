@@ -59,7 +59,7 @@ function API()
                             body = client:receive(contentLength)
                         end
 
-                        if(path == "/setTime")then
+                        if (path == "/setTime") then
                             time = tonumber(body)
                         else
                             if(path == "/add") then
@@ -73,7 +73,7 @@ function API()
                                     end
                                 end
                             end
-
+                        end
                         -- Générer une réponse OK
                         local response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\n\r\nOK"
                         client:send(response)
