@@ -38,7 +38,7 @@ function API()
                         client:send(response)
                     end
                 else 
-                    if method == "POST" and (path == "/add" or path=="/remove") then
+                    if method == "POST" and (path == "/add" or path=="/remove" or parth == "/setTime") then
                         -- Lire les données du corps de la requête
                         local contentLength = 0
                         local body = ""
@@ -59,17 +59,20 @@ function API()
                             body = client:receive(contentLength)
                         end
 
-                        if(path == "/add") then
-                            -- Stocker les données dans la liste locale
-                            table.insert(events, body)
+                        if(path == "/setTime")then
+                            time = tonumber(body)
                         else
-                            for i, v in ipairs(events) do
-                                if v == body then
-                                    table.remove(events, i)
-                                    break  -- Arrêtez la recherche dès que l'élément est trouvé et supprimé
+                            if(path == "/add") then
+                                -- Stocker les données dans la liste locale
+                                table.insert(events, body)
+                            else
+                                for i, v in ipairs(events) do
+                                    if v == body then
+                                        table.remove(events, i)
+                                        break  -- Arrêtez la recherche dès que l'élément est trouvé et supprimé
+                                    end
                                 end
                             end
-                        end
 
                         -- Générer une réponse OK
                         local response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\n\r\nOK"

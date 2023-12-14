@@ -92,6 +92,17 @@
     } catch (error) {
       console.error('Error fetching events:', error);
     }
+    const now = new Date(); // Get current date and time
+
+    const currentTimeInSeconds = Math.floor(now.getTime() / 1000); // Get current time in seconds
+    fetch(window.location.href+'setTime', {
+          method: 'POST',
+          headers: {
+          'Content-Type': 'application/json',
+          // Other headers if needed
+          },
+          body: JSON.stringify({currentTimeInSeconds}), // Your payload here
+    })
   },
   methods: {
     addEvent() {
