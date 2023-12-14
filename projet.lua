@@ -3,7 +3,7 @@ local sda = 18
 local scl = 21
 
 -- Configuration des broches I2C
-i2c.setupins(0, sda, scl)
+i2c.setpins(0, sda, scl)
 
 -- Adresse I2C de l'écran OLED
 local i2c_address = 0x3C
@@ -14,7 +14,7 @@ gdisplay.attach(gdisplay.SSD1306_128_64, gdisplay.LANDSCAPE_FLIP, false, i2c_add
 -- Fonction pour tronquer les chaînes de caractères si elles sont trop longues
 local function truncateString(str, maxLength)
     if string.len(str) > maxLength then
-        return string.sub(str, 1, 12) .. "..."
+        return string.sub(str, 1, maxLength-3) .. "..."
     else
         return str
     end
@@ -28,21 +28,18 @@ function displayEvent(event)
     -- Définit le type de police à utiliser
     gdisplay.setfont(gdisplay.FONT_DEFAULT)
 
+    local date = event:match('"date"%s*:%s*"([^"]+)"')
+    local description = event:match('"description"%s*:%s*"([^"]+)"')
+    local lieu = event:match('"lieu"%s*:%s*"([^"]+)"')
+
     -- Affiche le nom de l'événement, la date, l'heure et le lieu avec troncature
-    gdisplay.write({0, 0}, "Event: " .. truncateString(event.description, 15))
-    gdisplay.write({0, 16}, "Date: " .. truncateString(event.date, 15))
-    gdisplay.write({0, 32}, "Lieu: " .. truncateString(event.lieu, 15))
+    gdisplay.write({0, 0}, "Event: " .. truncateString(description, 9))
+    gdisplay.write({0, 16}, "Date: " .. truncateString(date, 9))
+    gdisplay.write({0, 32}, "Lieu: " .. truncateString(lieu, 9))
 
     -- Actualise l'écran
     gdisplay.update()
 end
-
--- Exemple d'événement
-local event = {
-    description = "Caravane",
-    date = "12/21/2023, 11:11:00 AM", -- Format MM/DD/YYYY, HH:MM:SS AM/PM
-    lieu = "Salle D010"
-}
 
 -- Appel de la fonction pour afficher l'événement
 -- displayEvent(event)
@@ -60,6 +57,27 @@ function getTimestamp(event)
     hour = tonumber(hour) + hourOffset
 
     return os.time({year = tonumber(year), month = tonumber(month), day = tonumber(day), hour = tonumber(hour), min = tonumber(min), sec = tonumber(sec)})
+end
+
+function getDate(timestamp)
+    return os.date("%m/%d/%Y, %I:%M:%S %p", timestamp)
+end
+
+function parseDateString(dateString)
+    local pattern = "(%d+)/(%d+)/(%d+), (%d+):(%d+):(%d+) (%u%u)"
+    local month, day, year, hour, min, sec, period = dateString:match(pattern)
+
+    local hourOffset = period == "PM" and 12 or 0
+    hour = tonumber(hour) + hourOffset
+
+    return {
+        year = tonumber(year),
+        month = tonumber(month),
+        day = tonumber(day),
+        hour = tonumber(hour),
+        min = tonumber(min),
+        sec = tonumber(sec)
+    }
 end
 
 function saveEvents()
