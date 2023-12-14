@@ -1,5 +1,5 @@
 function API()
-    -- Création du serveur sur le port 3000
+    -- Création du serveur sur le port 80
     local server = assert(require("socket").bind("*", 80))
 
     while true do
