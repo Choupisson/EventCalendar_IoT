@@ -21,7 +21,7 @@ local function truncateString(str, maxLength)
 end
 
 -- Fonction pour effacer l'écran et afficher l'événement
-local function displayEvent(event)
+function displayEvent(event)
     -- Efface l'écran
     gdisplay.clear()
 
@@ -45,4 +45,43 @@ local event = {
 }
 
 -- Appel de la fonction pour afficher l'événement
-displayEvent(event)
+-- displayEvent(event)
+
+function getTimestamp(event)
+    -- Expression régulière pour extraire la date
+    local datePattern = '"date"%s*:%s*"(%d+/%d+/%d+,%s*%d+:%d+:%d+ %u%u)"'
+    local dateString = event:match(datePattern)
+
+    -- Convertir la date en timestamp UNIX
+    local pattern = "(%d+)/(%d+)/(%d+), (%d+):(%d+):(%d+) (%u%u)"
+    local month, day, year, hour, min, sec, period = dateString:match(pattern)
+
+    local hourOffset = period == "PM" and 12 or 0
+    hour = tonumber(hour) + hourOffset
+
+    return os.time({year = tonumber(year), month = tonumber(month), day = tonumber(day), hour = tonumber(hour), min = tonumber(min), sec = tonumber(sec)})
+end
+
+function saveEvents()
+    local file = io.open("events.lua", "w")
+    
+    if file then
+        -- Écrire le tableau dans le fichier
+        file:write("events = {")
+        for i, v in ipairs(myTable) do
+            if type(v) == "string" then
+                file:write('"' .. v .. '"')
+            else
+                file:write(tostring(v))
+            end
+    
+            if i < #myTable then
+                file:write(", ")
+            end
+        end
+        file:write("}")
+        
+        -- Fermer le fichier
+        file:close()
+    end    
+end
