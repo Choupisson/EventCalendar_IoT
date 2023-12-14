@@ -3,7 +3,7 @@ local sda = 18
 local scl = 21
 
 -- Configuration des broches I2C
-i2c.setup(0, sda, scl, i2c.SLOW)
+i2c.setpins(0, sda, scl)
 
 -- Adresse I2C de l'écran OLED
 local i2c_address = 0x3C
