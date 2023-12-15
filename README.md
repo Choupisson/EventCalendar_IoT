@@ -28,7 +28,7 @@ Le script utilise des sockets pour accepter les connexions entrantes, lire les r
 Ce fichier semble être une base de données simple pour les événements. Il stocke les événements dans un tableau Lua nommé events. Les événements sont ajoutés, supprimés ou modifiés via l'API HTTP.
 
 ### neopixel.lua
-Ce script contrôle trois bandes de Neopixels représentant les mois, les jours et les heures jusqu'à un événement. Il définit des fonctions pour allumer et éteindre des pixels individuels et pour mettre à jour les bandes en fonction du temps restant avant un événement. **`neopixelExec()`**   est appelée pour ajuster les lumières en fonction du temps restant, et **`alert()`** est utilisée pour déclencher une alerte visuelle lorsque l'événement approche.
+Ce script contrôle trois bandes de Neopixels représentant les mois, les jours et les heures jusqu'à un événement, (une couleur pour chaque barre). **`allumer_neopixel(neo,n,r,g,b)`** sert a contrôler allumer les différents pixels à mesure qu'on se rapproche de la date du prochain évènement. **`neopixelExec(currentEvent)`** s'occupe   d'appeler les fonctions contrôlant les leds pour les allumer. Enfin, **`alert()`** est utilisée pour déclencher une alerte auditive et visuelle lorsque l'événement approche.
 
 ### projet.lua
 Ce script gère l'affichage des informations d'événement sur l'écran OLED. Il inclut la fonction La fonction **`truncateString`** qui permet de limiter la longueur des chaînes de caractères affichées. La fonction **`displayEvent`** est responsable de l'affichage des informations sur l'écran OLED. Elle commence par nettoyer l'écran avant de définir la police de texte. Ensuite, elle extrait les informations de l'événement - date, description, et lieu - à partir d'une chaîne donnée, et les affiche de manière concise. La fonction ajuste la taille du contenu textuel pour qu'il corresponde aux limites de l'écran et termine par rafraîchir l'affichage pour montrer les informations mises à jour.
@@ -52,6 +52,7 @@ Enfin, **`saveEvents`** prend en charge la persistance des événements. Cette f
 - **Adaptation dynamique de la troncature** : Ajuster dynamiquement le nombre de caractères tronqués en fonction de la taille de l'écran OLED.
 - **Support international** : Ajouter une prise en charge des formats de date et d'heure internationaux.
 - **Gestion des erreurs** : Ajouter une gestion d'erreurs pour les entrées de date invalides ou les problèmes lors de l'écriture dans le fichier.
+- **Adaptation à plusieurs tailles de neopixel** : Actuellement les scripts neopixels n'allument que jusqu'a 8 leds (contrainte dû au matériel que l'on dispose). Rentrer dans une variable la taille des neopixels (eventuellement les 3 ayant des tailles différentes) pour adapter les calculs pour les affichages sur les neopixels.
   
 ## Conclusion
 Ce projet illustre notre capacité à intégrer diverses technologies IoT pour créer une solution complète. L'affichage événementiel développé est flexible et peut être adapté pour diverses applications.
