@@ -93,17 +93,39 @@ function mainLoop()
                 next_event = v
             end
         end
-        displayEvent(next_event)
-        neopixelExec(next_event)
+        if getTimestamp(next_event) - timestamp > 0 then
+            displayEvent(next_event)
+            neopixelExec(next_event)
+        else
+            gdisplay.clear()
+            for i = 0, 8 do
+                neohour:setPixel(i, 0, 0, 0)
+                neoday:setPixel(i, 0, 0, 0)
+                neomonth:setPixel(i, 0, 0, 0)
+            end
+            neohour:update()
+            neoday:update()
+            neomonth:update()
+        end
         if math.abs(timestamp - getTimestamp(next_event)) <= 60 then
             alert()
         end
+    else
+        gdisplay.clear()
+        for i = 0, 8 do
+            neohour:setPixel(i, 0, 0, 0)
+            neoday:setPixel(i, 0, 0, 0)
+            neomonth:setPixel(i, 0, 0, 0)
+        end
+        neohour:update()
+        neoday:update()
+        neomonth:update()
     end
 end
 
 function mainEventCalendar()
     while true do
-        tmr.delay(10)
+        tmr.delay(20)
         mainLoop()
     end
 end
