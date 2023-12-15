@@ -9,7 +9,7 @@ i2c.setpins(0, sda, scl)
 local i2c_address = 0x3C
 
 -- Attache l'écran OLED
-gdisplay.attach(gdisplay.SSD1306_128_64, gdisplay.LANDSCAPE_FLIP, false, i2c_address)
+gdisplay.attach(gdisplay.SSD1306_128_64, gdisplay.LANDSCAPE, false, i2c_address)
 
 -- Fonction pour tronquer les chaînes de caractères si elles sont trop longues
 local function truncateString(str, maxLength)
@@ -32,22 +32,23 @@ function displayEvent(event)
     local description = event:match('"description"%s*:%s*"([^"]+)"')
     local lieu = event:match('"lieu"%s*:%s*"([^"]+)"')
 
-    -- Affiche le nom de l'événement, la date, l'heure et le lieu avec troncature
-    gdisplay.write({0, 0}, "Event: " .. truncateString(description, 9))
-    gdisplay.write({0, 16}, "Date: " .. truncateString(date, 9))
-    gdisplay.write({0, 32}, "Lieu: " .. truncateString(lieu, 9))
+    local date, heure = date:match("([^%-]+)%,(.+)")
 
-    -- Actualise l'écran
-    gdisplay.update()
+    -- Affiche le nom de l'événement, la date, l'heure et le lieu avec troncature
+    gdisplay.write({0, 0}, truncateString(description, 16))
+    gdisplay.write({0, 16}, truncateString(date, 16))
+    gdisplay.write({0, 32}, truncateString(heure, 16))
+    gdisplay.write({0, 48}, truncateString(lieu, 16))
+
 end
 
 -- Appel de la fonction pour afficher l'événement
 -- displayEvent(event)
 
-function getTimestamp(event)
+function getTimestamp(currentEvent)
     -- Expression régulière pour extraire la date
     local datePattern = '"date"%s*:%s*"(%d+/%d+/%d+,%s*%d+:%d+:%d+ %u%u)"'
-    local dateString = event:match(datePattern)
+    local dateString = currentEvent:match(datePattern)
 
     -- Convertir la date en timestamp UNIX
     local pattern = "(%d+)/(%d+)/(%d+), (%d+):(%d+):(%d+) (%u%u)"
@@ -59,41 +60,20 @@ function getTimestamp(event)
     return os.time({year = tonumber(year), month = tonumber(month), day = tonumber(day), hour = tonumber(hour), min = tonumber(min), sec = tonumber(sec)})
 end
 
-function getDate(timestamp)
-    return os.date("%m/%d/%Y, %I:%M:%S %p", timestamp)
-end
-
-function parseDateString(dateString)
-    local pattern = "(%d+)/(%d+)/(%d+), (%d+):(%d+):(%d+) (%u%u)"
-    local month, day, year, hour, min, sec, period = dateString:match(pattern)
-
-    local hourOffset = period == "PM" and 12 or 0
-    hour = tonumber(hour) + hourOffset
-
-    return {
-        year = tonumber(year),
-        month = tonumber(month),
-        day = tonumber(day),
-        hour = tonumber(hour),
-        min = tonumber(min),
-        sec = tonumber(sec)
-    }
-end
-
 function saveEvents()
-    local file = io.open("events.lua", "w")
+    local file = io.open("/events.lua", "w")
     
     if file then
         -- Écrire le tableau dans le fichier
         file:write("events = {")
-        for i, v in ipairs(myTable) do
+        for i, v in ipairs(events) do
             if type(v) == "string" then
-                file:write('"' .. v .. '"')
+                file:write("'" .. v .. "'")
             else
                 file:write(tostring(v))
             end
     
-            if i < #myTable then
+            if i < #events then
                 file:write(", ")
             end
         end
@@ -103,3 +83,29 @@ function saveEvents()
         file:close()
     end    
 end
+
+function mainLoop()
+    if timeSet and #events ~= 0 then
+        local timestamp = new_timestamp + old_timestamp - os.time() 
+        next_event = events[1]
+        for i,v in ipairs(events) do
+            if getTimestamp(v) > timestamp and getTimestamp(v) < getTimestamp(next_event) then
+                next_event = v
+            end
+        end
+        displayEvent(next_event)
+        neopixelExec(next_event)
+        if math.abs(timestamp - getTimestamp(next_event)) <= 60 then
+            alert()
+        end
+    end
+end
+
+function mainEventCalendar()
+    while true do
+        tmr.delay(10)
+        mainLoop()
+    end
+end
+
+thread.start(mainEventCalendar)

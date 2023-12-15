@@ -14,7 +14,7 @@ function API()
             -- Obtenir la méthode et le chemin de la requête
             local method, path, protocol = request:match("(%u+)%s+(.-)%s+(HTTP/%d.%d)")
 
-            if method == "GET" and path =="/events" then
+            if method == "GET" and path == "/events" then
                 local res = "["
                 for i, v in ipairs(events) do
                     res = res .. v
@@ -60,10 +60,11 @@ function API()
                         end
 
                         if (path == "/setTime") then
-                            time = tonumber(body)
+                            old_timestamp = os.time()
+                            new_timestamp = tonumber(body)
+                            timeSet = true
                         else
                             if(path == "/add") then
-                                -- Stocker les données dans la liste locale
                                 table.insert(events, body)
                             else
                                 for i, v in ipairs(events) do
@@ -74,6 +75,7 @@ function API()
                                 end
                             end
                             saveEvents()
+                            mainLoop()
                         end
                         -- Générer une réponse OK
                         local response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\n\r\nOK"

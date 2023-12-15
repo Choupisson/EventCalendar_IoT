@@ -138,7 +138,7 @@
     this.showModal = false;
     if (decision) {
         to_del = this.event_to_delete
-        let index = this.events.findIndex(event_to_delete => event_to_delete.id === to_del.id);
+        let index = this.events.findIndex(event_to_delete => event_to_delete.date == to_del.date && event_to_delete.description == to_del.description && event_to_delete.lieu === to_del.lieu);
 
         if (index !== -1) {
             this.events.splice(index, 1);
