@@ -1,4 +1,4 @@
-# Projet IoT : Affichage Événementiel
+# Projet IoT : NEBULA (Neopixel Event-Based Utility for Luminous Alerts)
 
 ## Membres du Groupe
 - Pierre WADRA
