@@ -25,7 +25,7 @@ Ce script est le cœur de la communication serveur pour l'ESP32. Il crée un ser
 Le script utilise des sockets pour accepter les connexions entrantes, lire les requêtes, et envoyer les réponses appropriées. Il gère également la fermeture des connexions clients.
 
 ### events.lua
-Ce fichier semble être une base de données simple pour les événements. Il stocke les événements dans un tableau Lua nommé events. Les événements sont ajoutés, supprimés ou modifiés via l'API HTTP.
+Ce fichier est une base de données simple pour les événements. Il stocke les événements dans un tableau Lua nommé events. Les événements sont ajoutés, supprimés ou modifiés via l'API HTTP.
 
 ### neopixel.lua
 Ce script contrôle trois bandes de Neopixels représentant les mois, les jours et les heures jusqu'à un événement, (une couleur pour chaque barre). **`allumer_neopixel(neo,n,r,g,b)`** sert a contrôler allumer les différents pixels à mesure qu'on se rapproche de la date du prochain évènement. **`neopixelExec(currentEvent)`** s'occupe   d'appeler les fonctions contrôlant les leds pour les allumer. Enfin, **`alert()`** est utilisée pour déclencher une alerte auditive et visuelle lorsque l'événement approche.
